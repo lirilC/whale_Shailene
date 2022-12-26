@@ -167,7 +167,7 @@ var recTangle_info= [
         /*physic.add ({ type:'box', name: "flower", pos:[view.getScene().getObjectByName(CARS[activeChar].name).position.x,view.getScene().getObjectByName(CARS[activeChar].name).position.y + 3,-42.5 - Math.random()*7], rot:[Math.random()*359,Math.random()*359,Math.random()*390], size:[0.03, 1.1, 0.03], mass:0.002,material:recTangl(0xcc8d57) } );
         view.getScene().getObjectByName("flower").add(cone(0xff223d))*/
     }},
-    {pic: "https://www.wikihow.com/images/thumb/0/00/Win-Playing-UNO-Step-7-Version-2.jpg/aid320316-v4-728px-Win-Playing-UNO-Step-7-Version-2.jpg", title: "&iexcl;UNO&reg;!", description: "&iexcl;Solo te queda una carta!, &iexcl;ganaste en UNO&reg;", price: 100, funcTion: function(){
+    {pic: "https://www.wikihow.com/images/thumb/0/00/Win-Playing-UNO-Step-7-Version-2.jpg/aid320316-v4-728px-Win-Playing-UNO-Step-7-Version-2.jpg", title: "&iexcl;UNO&reg;!", description: "&iexcl;Solo te queda una carta!, &iexcl;ganaste en UNO&reg;!", price: 100, funcTion: function(){
         heXa= ["0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"]
         function heXai(){
             let reTurn= ""
@@ -182,6 +182,148 @@ var recTangle_info= [
         physic.add({type:'box', name: c_name, group:1, size:[0.001,0.2,0.1], pos:[view.getScene().getObjectByName(CARS[activeChar].name).position.x + Math.sin(view.getScene().getObjectByName(CARS[activeChar].name).rotation._y) * 3, view.getScene().getObjectByName(CARS[activeChar].name).position.y + 3,view.getScene().getObjectByName(CARS[activeChar].name).position.z + Math.cos(view.getScene().getObjectByName(CARS[activeChar].name).rotation._y) * 3], rot:[Math.random()*180,Math.random()*180,Math.random()*180], mass: 0.001,material: recTangl(0xff0000), castShadow: false });
         cube = new THREE.Mesh(  new THREE.BoxGeometry( 0.002,0.154709997,0.053777997 ), new THREE.MeshBasicMaterial( {color: 0xffffff} ) );
         view.getScene().getObjectByName(c_name).add(cube)
+    }},
+    {pic: "https://lirilc.github.io/resources/images/white.jpg", title: "&iexcl;liril es para estudiar!", description: "liril te regala un cuaderno y dos l&aacute;pices (ning&uacute;n sacapuntas). ..Una mesa.", price: 10, funcTion: function(){
+        heXa= ["0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"]
+        
+        var s = (6*0.5) - 0.3; 
+        physic.add({
+            type:'compound',
+            mass:1,
+            pos:[view.getScene().getObjectByName(CARS[activeChar].name).position.x + Math.sin(view.getScene().getObjectByName(CARS[activeChar].name).rotation._y) * 5, view.getScene().getObjectByName(CARS[activeChar].name).position.y + 3,view.getScene().getObjectByName(CARS[activeChar].name).position.z + Math.cos(view.getScene().getObjectByName(CARS[activeChar].name).rotation._y) * 5],
+            shapes:(function(o){var tableShape = [
+                        { type:'box', pos:[0,0,0], size:[ o*6,o*0.5,o*6 ] },
+                        { type:'box', pos:[o*s,o*-2.25,o*s], size:[ o*0.6,o*4,o*0.6 ] },
+                        { type:'box', pos:[o*-s,o*-2.25,o*s], size:[ o*0.6,o*4,o*0.6 ] },
+                        { type:'box', pos:[o*s,o*-2.25,-o*s], size:[ o*0.6,o*4,o*0.6 ] },
+                        { type:'box', pos:[o*-s,o*-2.25,-o*s], size:[ o*0.6,o*4,o*0.6 ] },
+                    ]
+
+                return tableShape})(0.3),
+            friction:0.5, 
+            rot:[0,Math.random()*180,0],
+            restitution:0.5,
+            material:recTangl(0x8a6e55)
+        })
+        physic.add({
+            type:'compound',
+            mass:1,
+            pos:[view.getScene().getObjectByName(CARS[activeChar].name).position.x + Math.sin(view.getScene().getObjectByName(CARS[activeChar].name).rotation._y) * 4.1, view.getScene().getObjectByName(CARS[activeChar].name).position.y + 5,view.getScene().getObjectByName(CARS[activeChar].name).position.z + Math.cos(view.getScene().getObjectByName(CARS[activeChar].name).rotation._y) * 4.1],
+            shapes:(function(O){var notebookShape = [
+                        { type:'box', pos:[O*0,O*0,O*0], size:[ O*0.01,O*3.7,O*2 ] },
+                        { type:'box', pos:[O*-0.03,O*0,O*0], size:[ O*0.01,O*3.7,O*2 ] },
+                        { type:'box', pos:[O*0.06,O*0,O*0], size:[ O*0.01,O*3.7,O*2 ] },
+                        { type:'box', pos:[O*0.09,O*0,O*0], size:[ O*0.01,O*3.7,O*2 ] },
+                        { type:'box', pos:[O*0.12,O*0,O*0], size:[ O*0.01,O*3.7,O*2 ] },
+                        { type:'box', pos:[O*0.15,O*0,O*0], size:[ O*0.01,O*3.7,O*2 ] },
+                        { type:'box', pos:[O*0.18,O*0,O*0], size:[ O*0.01,O*3.7,O*2 ] },
+                        { type:'box', pos:[O*0.21,O*0,O*0], size:[ O*0.01,O*3.7,O*2 ] },
+                        { type:'box', pos:[O*0.24,O*0,O*0], size:[ O*0.01,O*3.7,O*2 ] },
+                        { type:'box', pos:[O*-0.06,O*0,O*0], size:[ O*0.01,O*3.7,O*2 ] },
+                        { type:'box', pos:[O*-0.09,O*0,O*0], size:[ O*0.01,O*3.7,O*2 ] },
+                        { type:'box', pos:[O*-0.12,O*0,O*0], size:[ O*0.01,O*3.7,O*2 ] },
+                        { type:'box', pos:[O*-0.15,O*0,O*0], size:[ O*0.01,O*3.7,O*2 ] },
+                        { type:'box', pos:[O*-0.18,O*0,O*0], size:[ O*0.01,O*3.7,O*2 ] },
+                        { type:'box', pos:[O*-0.21,O*0,O*0], size:[ O*0.01,O*3.7,O*2 ] },
+                        { type:'box', pos:[O*-0.24,O*0,O*0], size:[ O*0.01,O*3.7,O*2 ] },
+{ type:'box', pos:[O*0,O*0,O*-0.8], size:[ O*-0.79,O*3.7,O*0.4 ] }
+                   ]
+
+                return notebookShape})(0.17),
+            friction:0.5, 
+            rot:[Math.random()*180,Math.random()*180,Math.random()*180],
+            restitution:0.5,
+            material:recTangl(0xf29fff)
+        })
+
+        var O=10.817
+        physic.add({
+            type:'cylinder',
+            mass:0.00002,
+            pos:[view.getScene().getObjectByName(CARS[activeChar].name).position.x + Math.sin(view.getScene().getObjectByName(CARS[activeChar].name).rotation._y) * 3, view.getScene().getObjectByName(CARS[activeChar].name).position.y + 3.2,view.getScene().getObjectByName(CARS[activeChar].name).position.z + Math.cos(view.getScene().getObjectByName(CARS[activeChar].name).rotation._y) * 3],
+            size:[ O*0.02,O*0.002,O*0 ],
+            friction:0.5, 
+            rot:[Math.random()*180,Math.random()*180,Math.random()*180],
+            restitution:0.5,
+            material:recTangl(0xf29f23)
+        })
+        physic.add({
+            type:'cylinder',
+            mass:0.00002,
+            pos:[view.getScene().getObjectByName(CARS[activeChar].name).position.x + Math.sin(view.getScene().getObjectByName(CARS[activeChar].name).rotation._y) * 3, view.getScene().getObjectByName(CARS[activeChar].name).position.y + 3.2,view.getScene().getObjectByName(CARS[activeChar].name).position.z + Math.cos(view.getScene().getObjectByName(CARS[activeChar].name).rotation._y) * 3],
+            size:[ O*0.02,O*0.002,O*0 ],
+            friction:0.5, 
+            rot:[Math.random()*180,Math.random()*180,Math.random()*180],
+            restitution:0.5,
+            material:recTangl(0xf29f23)
+        })
+    }},
+    {pic: "https://www.elimparcial.es/galerias-noticias/galerias/115918/medium/tabac_d.jpg", title: "Algunos cigarrillos", description: "39 cigarrillos", price: 31, funcTion: function(){
+        heXa= ["0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"]
+        var heXai= function(){
+            let reTurn= ""
+
+            while(reTurn.length<6){
+            reTurn= reTurn + heXa[parseInt(Math.random() * heXa.length)]
+            }
+
+            return reTurn
+        }
+        var filter= function(c){
+            var O=1
+            one= new THREE.Mesh( new THREE.CylinderGeometry( O*0.002,O*0.01, 0.057, 32 ), c )
+            one.position.x=0.13
+            one.rotation.z= 90 * Math.PI/180
+            return one
+        };
+        for(var w= 39; w;w--){
+            var c_name='C_'+  heXai();
+            (function(O){physic.add({
+                type:'cylinder',
+                name: c_name,
+                mass:0.0000000012562,
+                pos:[-22.5,(3+2*Math.random()),(-42.5 - Math.random()*7)],
+                size:[ O*0.16,O*0.008,O*0 ],
+                friction:0.5, 
+                rot:[Math.random()*180,Math.random()*180,Math.random()*180],
+                restitution:0.5,
+                material:recTangl(0xffffff)
+            })})(1)
+            view.getScene().getObjectByName(c_name).add(filter(recTangl(0xf7f500)))
+        }
+    }, re_fusTion: function(){
+        heXa= ["0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"]
+        var heXai= function(){
+            let reTurn= ""
+
+            while(reTurn.length<6){
+            reTurn= reTurn + heXa[parseInt(Math.random() * heXa.length)]
+            }
+
+            return reTurn
+        }
+        var filter= function(c){
+            var O=1
+            one= new THREE.Mesh( new THREE.CylinderGeometry( O*0.002,O*0.01, 0.057, 32 ), c )
+            one.position.x=0.13
+            one.rotation.z= 90 * Math.PI/180
+            return one
+        };
+        for(var w= 6; w;w--){
+            var c_name='C_'+  heXai();
+            (function(O){physic.add({
+                type:'cylinder',
+                name: c_name,
+                mass:0.0000000012562,
+                pos:[-22.5,(3+2*Math.random()),(-42.5 - Math.random()*7)],
+                size:[ O*0.16,O*0.008,O*0 ],
+                friction:0.5, 
+                rot:[Math.random()*180,Math.random()*180,Math.random()*180],
+                restitution:0.5,
+                material:recTangl(0xffffff)
+            })})(1)
+            view.getScene().getObjectByName(c_name).add(filter(recTangl(0xf7f500)))
+        }
     }}
 ]
 function demo () {
