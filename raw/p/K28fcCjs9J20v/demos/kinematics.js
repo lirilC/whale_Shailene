@@ -109,7 +109,7 @@ var recTangle_info= [
     }},
     {pic: "http://canadajournal.net/wp-content/uploads/2014/12/Lost-Luggage-Found-20-Years-Later-Video.jpg", title: "Where're my bags?", description: "Recuberarás tus maletas.", price: 82, funcTion: function(){
         for(var i= 2 + parseInt(Math.random()* 19); i; i--){
-            physic.add({type:'box', group:1, size:[0.3 + Math.random()*0.2,0.9 + Math.random()*0.9,1.2* Math.random()*1.1], pos:[27.5,3,-42.5 - Math.random()*7], rot:[Math.random()*180,Math.random()*180,Math.random()*180], mass: Math.random() * 2,material: recTangl([0x794e4e, 0x8e6f6f, 0xcea392, 0x625b5b][parseInt(Math.random() * 4 + 1)]) });
+            physic.add({type:'box', group:1, size:[0.3 + Math.random()*0.2,0.9 + Math.random()*0.9,1.2* Math.random()*1.1], pos:[27.5,3,-42.5 - Math.random()*7], rot:[Math.random()*180,Math.random()*180,Math.random()*180], mass: Math.random() * 2,material: recTangl([0x794e4e, 0x8e6f6f, 0xcea392, 0x625b5b][parseInt(Math.random() * 4)]) });
         }
     }},
     {pic: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn.shopify.com%2Fs%2Ffiles%2F1%2F1061%2F1924%2Fproducts%2FAngel_Halo_Emoji_Icon_0ff75c27-5416-4ac6-bf1a-2a2d44b0a32b_grande.png%3Fv%3D1542446807&f=1&nofb=1&ipt=f487639cb89ec13d835512f33e085847741d7530bc21efbbddb86fe26fbfc9d4&ipo=images", title: "A lo que vinimos", description: "Obtendr&aacute;s un alo para tu carro.", price: 20, funcTion: function(){
@@ -324,7 +324,178 @@ var recTangle_info= [
             })})(1)
             view.getScene().getObjectByName(c_name).add(filter(recTangl(0xf7f500)))
         }
+    }},
+    {pic: "https://stoneyroads.com/wp-content/uploads/2019/02/house-party-large.jpg", title: "&iexcl;Fiesta para 11!", description: "Festeja responsablemente.", price: 11, funcTion: function(){
+        heXa= ["0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"]
+        var heXai= function(){
+            let reTurn= ""
+
+            while(reTurn.length<6){
+            reTurn= reTurn + heXa[parseInt(Math.random() * heXa.length)]
+            }
+
+            return reTurn
+        }
+        function ragdoll (id, x, y, z) {
+            id= "ragdoll_" + heXai()
+            var mass = 0.2;
+            var collision = true;
+            var rIn= (parseInt(Math.random()*5)-2)
+            var p = {x:view.getScene().getObjectByName(CARS[activeChar].name).position.x + Math.sin(view.getScene().getObjectByName(CARS[activeChar].name).rotation._y) * rIn, y: view.getScene().getObjectByName(CARS[activeChar].name).position.y + (1.5+Math.random()*3.2), z:view.getScene().getObjectByName(CARS[activeChar].name).position.z + Math.cos(view.getScene().getObjectByName(CARS[activeChar].name).rotation._y) * rIn};
+            var spring = [2, 0.3, 0.1]; // softness, bias, relaxation
+            var type = 'box';
+
+            // joint is default joint_hinge
+            // joint can be :
+            // joint_hinge, joint_p2p, joint_slider, joint_conetwist, joint_dof, joint_spring_dof
+
+            // body
+
+            physic.addGroup([
+
+                { type:type, size:[0.2,0.1,0.15], pos:[p.x,p.y-0.2,p.z], mass:mass,  name:'pelvis'+id },
+                { type:type, size:[0.2,0.1,0.15], pos:[p.x,p.y-0.1,p.z], mass:mass,  name:'spine1_'+id },
+                { type:type, size:[0.2,0.1,0.15], pos:[p.x,p.y,p.z], mass:mass, name:'spine2_'+id, noSleep:true },
+                { type:type, size:[0.2,0.1,0.15], pos:[p.x,p.y+0.1,p.z], mass:mass,  name:'spine3_'+id },
+                { type:"sphere", size:[0.1,0.1,0.1], pos:[p.x,p.y+0.3,p.z], mass:mass,  name:'head'+id },
+
+                { type:"joint", b1:'pelvis'+id, b2:'spine1_'+id, pos1:[0,0.05,0], pos2:[0,-0.05,0], limit:[2,20].concat(spring), collision:collision },
+                { type:"joint", b1:'spine1_'+id, b2:'spine2_'+id, pos1:[0,0.05,0], pos2:[0,-0.05,0], limit:[2,20].concat(spring), collision:collision },
+                { type:"joint", b1:'spine2_'+id, b2:'spine3_'+id, pos1:[0,0.05,0], pos2:[0,-0.05,0], limit:[2,20].concat(spring), collision:collision },
+                { type:"joint", b1:'spine3_'+id, b2:'head'+id,  pos1:[0,0.05,0], pos2:[0,-0.1,0], limit:[2,20].concat(spring), collision:collision },
+
+                //arm
+
+                { type:type, size:[0.2,0.1,0.1], pos:[p.x-0.2,p.y+0.08,p.z], rot:[0,0,20], mass:mass,  name:'L_arm'+id },
+                { type:type, size:[0.2,0.08,0.08], pos:[p.x-0.4,p.y,p.z], rot:[0,0,20], mass:mass,  name:'LF_arm'+id },
+
+                { type:type, size:[0.2,0.1,0.1], pos:[p.x+0.2,p.y+0.08,p.z], rot:[0,0,-20], mass:mass,  name:'R_arm'+id },
+                { type:type, size:[0.2,0.08,0.08], pos:[p.x+0.4,p.y,p.z], rot:[0,0,-20], mass:mass,  name:'RF_arm'+id },
+
+                { type:"joint", b1:'spine3_'+id, b2:'L_arm'+id, pos1:[-0.1,0,0], pos2:[0.1,0,0], axe1:[0,1,1], axe2:[0,1,1], collision:collision },
+                { type:"joint", b1:'spine3_'+id, b2:'R_arm'+id, pos1:[0.1,0,0], pos2:[-0.1,0,0], axe1:[0,1,1], axe2:[0,1,1], collision:collision },
+
+                { type:"joint", b1:'L_arm'+id, b2:'LF_arm'+id, pos1:[-0.1,0,0], pos2:[0.1,0,0], axe1:[0,1,0], axe2:[0,1,0], collision:collision },
+                { type:"joint", b1:'R_arm'+id, b2:'RF_arm'+id, pos1:[0.1,0,0], pos2:[-0.1,0,0], axe1:[0,1,0], axe2:[0,1,0], collision:collision },
+
+                // leg
+
+                { type:type, size:[0.1,0.2,0.1], pos:[p.x-0.06,p.y-0.4,p.z], rot:[0,0,-20], mass:mass, name:'L_leg'+id },
+                { type:type, size:[0.08,0.2,0.08], pos:[p.x-0.15,p.y-0.7,p.z], rot:[0,0,-20], mass:mass, name:'LF_leg'+id },
+
+                { type:type, size:[0.1,0.2,0.1], pos:[p.x+0.06,p.y-0.4,p.z], rot:[0,0,20], mass:mass, name:'R_leg'+id },
+                { type:type, size:[0.08,0.2,0.08], pos:[p.x+0.15,p.y-0.7,p.z], rot:[0,0,20], mass:mass, name:'RF_leg'+id },
+
+                { type:"joint", b1:'pelvis'+id, b2:'L_leg'+id, pos1:[-0.06,-0.05,0], pos2:[0,0.1,0], limit:[2,60], collision:collision },
+                { type:"joint", b1:'pelvis'+id, b2:'R_leg'+id, pos1:[0.06,-0.05,0], pos2:[0,0.1,0], limit:[2,60], collision:collision },
+
+                { type:"joint", b1:'L_leg'+id, b2:'LF_leg'+id, pos1:[0,-0.1,0], pos2:[0,0.1,0], axe1:[1,0,0], axe2:[1,0,0], limit:[2,60], collision:collision },
+                { type:"joint", b1:'R_leg'+id, b2:'RF_leg'+id, pos1:[0,-0.1,0], pos2:[0,0.1,0], axe1:[1,0,0], axe2:[1,0,0], limit:[2,60], collision:collision },
+
+            ]);
+
+        };
+        for(var i = 0; i<10; i++){
+            ragdoll(i, 0, 2+((1.5+(Math.random()*3.5))*i), 0, 2 );
+        }
+    }, re_fusTion: function(){
+        heXa= ["0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"]
+        var heXai= function(){
+            let reTurn= ""
+
+            while(reTurn.length<6){
+            reTurn= reTurn + heXa[parseInt(Math.random() * heXa.length)]
+            }
+
+            return reTurn
+        }
+        function ragdoll (id, x, y, z) {
+            id= "ragdoll_" + heXai()
+            var mass = 0.2;
+            var collision = true;
+            var rIn= (parseInt(Math.random()*5)-2)
+            var p = {x:view.getScene().getObjectByName(CARS[activeChar].name).position.x + Math.sin(view.getScene().getObjectByName(CARS[activeChar].name).rotation._y) * rIn, y: view.getScene().getObjectByName(CARS[activeChar].name).position.y + (1.5+Math.random()*3.2), z:view.getScene().getObjectByName(CARS[activeChar].name).position.z + Math.cos(view.getScene().getObjectByName(CARS[activeChar].name).rotation._y) * rIn};
+            var spring = [2, 0.3, 0.1]; // softness, bias, relaxation
+            var type = 'box';
+
+            // joint is default joint_hinge
+            // joint can be :
+            // joint_hinge, joint_p2p, joint_slider, joint_conetwist, joint_dof, joint_spring_dof
+
+            // body
+
+            physic.addGroup([
+
+                { type:type, size:[0.2,0.1,0.15], pos:[p.x,p.y-0.2,p.z], mass:mass,  name:'pelvis'+id },
+                { type:type, size:[0.2,0.1,0.15], pos:[p.x,p.y-0.1,p.z], mass:mass,  name:'spine1_'+id },
+                { type:type, size:[0.2,0.1,0.15], pos:[p.x,p.y,p.z], mass:mass, name:'spine2_'+id, noSleep:true },
+                { type:type, size:[0.2,0.1,0.15], pos:[p.x,p.y+0.1,p.z], mass:mass,  name:'spine3_'+id },
+                { type:"sphere", size:[0.1,0.1,0.1], pos:[p.x,p.y+0.3,p.z], mass:mass,  name:'head'+id },
+
+                { type:"joint", b1:'pelvis'+id, b2:'spine1_'+id, pos1:[0,0.05,0], pos2:[0,-0.05,0], limit:[2,20].concat(spring), collision:collision },
+                { type:"joint", b1:'spine1_'+id, b2:'spine2_'+id, pos1:[0,0.05,0], pos2:[0,-0.05,0], limit:[2,20].concat(spring), collision:collision },
+                { type:"joint", b1:'spine2_'+id, b2:'spine3_'+id, pos1:[0,0.05,0], pos2:[0,-0.05,0], limit:[2,20].concat(spring), collision:collision },
+                { type:"joint", b1:'spine3_'+id, b2:'head'+id,  pos1:[0,0.05,0], pos2:[0,-0.1,0], limit:[2,20].concat(spring), collision:collision },
+
+                //arm
+
+                { type:type, size:[0.2,0.1,0.1], pos:[p.x-0.2,p.y+0.08,p.z], rot:[0,0,20], mass:mass,  name:'L_arm'+id },
+                { type:type, size:[0.2,0.08,0.08], pos:[p.x-0.4,p.y,p.z], rot:[0,0,20], mass:mass,  name:'LF_arm'+id },
+
+                { type:type, size:[0.2,0.1,0.1], pos:[p.x+0.2,p.y+0.08,p.z], rot:[0,0,-20], mass:mass,  name:'R_arm'+id },
+                { type:type, size:[0.2,0.08,0.08], pos:[p.x+0.4,p.y,p.z], rot:[0,0,-20], mass:mass,  name:'RF_arm'+id },
+
+                { type:"joint", b1:'spine3_'+id, b2:'L_arm'+id, pos1:[-0.1,0,0], pos2:[0.1,0,0], axe1:[0,1,1], axe2:[0,1,1], collision:collision },
+                { type:"joint", b1:'spine3_'+id, b2:'R_arm'+id, pos1:[0.1,0,0], pos2:[-0.1,0,0], axe1:[0,1,1], axe2:[0,1,1], collision:collision },
+
+                { type:"joint", b1:'L_arm'+id, b2:'LF_arm'+id, pos1:[-0.1,0,0], pos2:[0.1,0,0], axe1:[0,1,0], axe2:[0,1,0], collision:collision },
+                { type:"joint", b1:'R_arm'+id, b2:'RF_arm'+id, pos1:[0.1,0,0], pos2:[-0.1,0,0], axe1:[0,1,0], axe2:[0,1,0], collision:collision },
+
+                // leg
+
+                { type:type, size:[0.1,0.2,0.1], pos:[p.x-0.06,p.y-0.4,p.z], rot:[0,0,-20], mass:mass, name:'L_leg'+id },
+                { type:type, size:[0.08,0.2,0.08], pos:[p.x-0.15,p.y-0.7,p.z], rot:[0,0,-20], mass:mass, name:'LF_leg'+id },
+
+                { type:type, size:[0.1,0.2,0.1], pos:[p.x+0.06,p.y-0.4,p.z], rot:[0,0,20], mass:mass, name:'R_leg'+id },
+                { type:type, size:[0.08,0.2,0.08], pos:[p.x+0.15,p.y-0.7,p.z], rot:[0,0,20], mass:mass, name:'RF_leg'+id },
+
+                { type:"joint", b1:'pelvis'+id, b2:'L_leg'+id, pos1:[-0.06,-0.05,0], pos2:[0,0.1,0], limit:[2,60], collision:collision },
+                { type:"joint", b1:'pelvis'+id, b2:'R_leg'+id, pos1:[0.06,-0.05,0], pos2:[0,0.1,0], limit:[2,60], collision:collision },
+
+                { type:"joint", b1:'L_leg'+id, b2:'LF_leg'+id, pos1:[0,-0.1,0], pos2:[0,0.1,0], axe1:[1,0,0], axe2:[1,0,0], limit:[2,60], collision:collision },
+                { type:"joint", b1:'R_leg'+id, b2:'RF_leg'+id, pos1:[0,-0.1,0], pos2:[0,0.1,0], axe1:[1,0,0], axe2:[1,0,0], limit:[2,60], collision:collision },
+
+            ]);
+
+        };
+        var i= 1
+        ragdoll(i, 0, 2+((1.5+(Math.random()*3.5))*i), 0, 2 );
+    }},
+    {pic: "https://images.skyscrapercenter.com/building/edificio-coltejer_laloking972.jpg", title: "Edificios", description: "Tres edificios inclinados.", price: 161, funcTion: function(){
+        heXa= ["0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"]
+        var heXai= function(){
+            let reTurn= ""
+
+            while(reTurn.length<6){
+            reTurn= reTurn + heXa[parseInt(Math.random() * heXa.length)]
+            }
+
+            return reTurn
+        }
+        for(var w= 3; w;w--){
+            physic.add({type:'box', group:1, size:[1 + Math.random()*3,(function(){a=Math.random()*15;return a})(),1 + Math.random()*3], pos:[(Math.random()* ((37.5-12.5) + 1) + 12.5) * (Math.random() < 0.5?-1:1),0,-45.5+(Math.random()*6-2.5)], rot:[Math.random()*180,Math.random()*180,Math.random()*180], mass: 0,material: recTangl([0xf928f9, 0x2802c9, 0x39c92c, 0x2889c9, 0xd010d0, 0x20dcaa, 0xaa8c99, 0x322d2f, 0x4d7dd3, 0x1124c1][parseInt(Math.random() * 10)])});
+        }
+    }},
+    {pic: "https://static.stihl.com/upload/assetmanager/modell_imagefilename/scaled/zoom/f4d8426ce9c04a61bf176cf0e222f942.jpg", title: "Poda por todos", description: "Paga la cuota comunitaria para podar de las ramas La Tabla.", price: 24, funcTion: function(){
+        
+    }, re_fusTion: function(){
+        for(var w= 10; w;w--){
+            physic.add({type:'hardbox', group:1, size:[Math.random()*0.6,(function(){a=Math.random()*11;return a})(),Math.random()*0.6], pos:[-37.5+(Math.random()*6-2.5),a/2,-45.5+(Math.random()*10-4.5)], rot:[Math.random()*180,Math.random()*180,Math.random()*180], mass: 0,material: recTangl(0xd9966e), castShadow: false, breakable:true, breakOption:[ 56, 17,23, 23 ],});
+        }
     }}
+
+      
+
 ]
 function demo () {
     view.moveCam({ theta:-90, phi:40, distance:13, target:[47, 0,-44] });
