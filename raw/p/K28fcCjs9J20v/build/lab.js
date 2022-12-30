@@ -80475,7 +80475,6 @@ view = {
 
         //isNeedUpdate = false;
 
-        grid.visible = true;
         if( shadowGround !== null ) shadowGround.visible = true;
 
         while( extraMesh.children.length > 0 ) scene.remove( extraMesh.children.pop() );
@@ -81305,30 +81304,19 @@ view = {
 
     initGrid: function ( o ){
 
-        if( grid !== null ){ 
-            scene.remove( grid );
-            grid.geometry.dispose();
-            grid.material.dispose();
-        }
 
-        o = o || {};
-        grid = new THREE.GridHelper( o.s1 || 40, o.s2 || 16, o.c1 || 0x000000, o.c2 || 0x020202 );
-        grid.material = new THREE.LineBasicMaterial( { vertexColors: THREE.VertexColors, transparent:true, opacity:0.15, depthTest:true, depthWrite:false } );
-        grid.position.y = -0.01;
-        scene.add( grid );
 
     },
 
     hideGrid: function ( notGround ) {
 
-        if( grid.visible ){ grid.visible = false; if( shadowGround !== null && !notGround ) shadowGround.visible = false; }
-        else{ grid.visible = true; if( shadowGround !== null && !notGround ) shadowGround.visible = true; }
+
 
     },
 
     showGrid: function ( b ) {
 
-        grid.visible = b;
+
 
     },
 

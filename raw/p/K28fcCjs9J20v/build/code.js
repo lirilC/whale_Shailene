@@ -24307,12 +24307,12 @@ editor = {
         // mini debug
 
         miniDebugS = document.createElement( 'div' );
-        miniDebugS.style.cssText = unselectable + 'width:150px; font-size: 10px; position:absolute;  bottom:'+((space)-1)+'px; color:#000000; text-align:left; left:'+((space*2)+1)+'px';
+        miniDebugS.style.cssText = unselectable + 'display:none; width:150px; font-size: 10px; position:absolute;  bottom:'+((space)-1)+'px; color:#000000; text-align:left; left:'+((space*2)+1)+'px';
         bottomLeft.appendChild( miniDebugS );
 
 
         miniDebug = document.createElement( 'div' );
-        miniDebug.style.cssText = unselectable + 'width:150px; font-size: 10px; position:absolute; bottom:'+space+'px; color:'+selectColor+'; text-align:left; left:'+((space*2)+50)+'px';
+        miniDebug.style.cssText = unselectable + 'display:none; width:150px; font-size: 10px; position:absolute; bottom:'+space+'px; color:'+selectColor+'; text-align:left; left:'+((space*2)+50)+'px';
         bottomLeft.appendChild( miniDebug );
 
         // title
@@ -24366,6 +24366,25 @@ editor = {
     },
 
     addExtraOption: function ( callback ) {
+		modeCallBack = callback;
+
+        extra01 = document.createElement( 'div' );
+        extra01.style.cssText = 'display:none; position:absolute; width:30px; height:30px; right:10px; bottom:50px; pointer-events:auto; cursor:pointer; '
+        extra01.innerHTML = editor.icon('shoot', '#383938', 30, 30);
+        bottomRight.appendChild( extra01 );
+
+        extra02 = document.createElement( 'div' );
+        extra02.style.cssText = 'display:none; position:absolute; width:30px; height:30px; right:10px; bottom:90px; pointer-events:auto; cursor:pointer; '
+        extra02.innerHTML = editor.icon('picker', '#383938', 30, 30);
+        bottomRight.appendChild( extra02 );
+
+        extra01.addEventListener('click', function(){ editor.toggleExtraMode( 'shoot' ) }, false );
+        extra01.addEventListener('mouseover', function(){ this.innerHTML = editor.icon('shoot',   selectColor, 30, 30); }, false );
+        extra01.addEventListener('mouseout', function(){ this.innerHTML = editor.icon('shoot',  editor.extraMode === 'shoot' ? '#787978' : '#383938', 30, 30); }, false );
+
+        extra02.addEventListener('click',  function(){ editor.toggleExtraMode( 'picker' ); }, false );
+        extra02.addEventListener('mouseover', function(){ this.innerHTML = editor.icon('picker', selectColor, 30, 30); }, false );
+        extra02.addEventListener('mouseout', function(){ this.innerHTML = editor.icon('picker',  editor.extraMode === 'picker' ? '#787978' : '#383938', 30, 30); }, false );
 
        
 

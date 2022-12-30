@@ -17,6 +17,17 @@ recTangl= function(f,shads){
         //side: THREE.DoubleSide,
     })
 }
+transpar= function(){
+    return view.material({
+        color: 0x000000,
+        metalness:1,
+        roughness:1,
+        transparent: true,
+        opacity:0,
+        premultipliedAlpha:true,
+        //side: THREE.DoubleSide,
+    })
+}
 pawn_material= function(f){
     return view.material({
         color: f,
@@ -189,7 +200,7 @@ var recTangle_info= [
         var s = (6*0.5) - 0.3; 
         physic.add({
             type:'compound',
-            mass:1,
+            mass:312,
             pos:[view.getScene().getObjectByName(CARS[activeChar].name).position.x + Math.sin(view.getScene().getObjectByName(CARS[activeChar].name).rotation._y) * 5, view.getScene().getObjectByName(CARS[activeChar].name).position.y + 3,view.getScene().getObjectByName(CARS[activeChar].name).position.z + Math.cos(view.getScene().getObjectByName(CARS[activeChar].name).rotation._y) * 5],
             shapes:(function(o){var tableShape = [
                         { type:'box', pos:[0,0,0], size:[ o*6,o*0.5,o*6 ] },
@@ -207,7 +218,7 @@ var recTangle_info= [
         })
         physic.add({
             type:'compound',
-            mass:1,
+            mass:51,
             pos:[view.getScene().getObjectByName(CARS[activeChar].name).position.x + Math.sin(view.getScene().getObjectByName(CARS[activeChar].name).rotation._y) * 4.1, view.getScene().getObjectByName(CARS[activeChar].name).position.y + 5,view.getScene().getObjectByName(CARS[activeChar].name).position.z + Math.cos(view.getScene().getObjectByName(CARS[activeChar].name).rotation._y) * 4.1],
             shapes:(function(O){var notebookShape = [
                         { type:'box', pos:[O*0,O*0,O*0], size:[ O*0.01,O*3.7,O*2 ] },
@@ -271,7 +282,7 @@ var recTangle_info= [
         }
         var filter= function(c){
             var O=1
-            one= new THREE.Mesh( new THREE.CylinderGeometry( O*0.002,O*0.01, 0.057, 32 ), c )
+            one= new THREE.Mesh( new THREE.CylinderGeometry( O*0.01,O*0.01, 0.067, 32 ), c )
             one.position.x=0.13
             one.rotation.z= 90 * Math.PI/180
             return one
@@ -289,7 +300,7 @@ var recTangle_info= [
                 restitution:0.5,
                 material:recTangl(0xffffff)
             })})(1)
-            view.getScene().getObjectByName(c_name).add(filter(recTangl(0xf7f500)))
+            view.getScene().getObjectByName(c_name).add(filter(recTangl(0xfd7028)))
         }
     }, re_fusTion: function(){
         heXa= ["0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"]
@@ -482,8 +493,14 @@ var recTangle_info= [
 
             return reTurn
         }
+        var heXaii= function(){
+          return (function (fn) {
+            return new Function('return ' + fn)();
+          })(`0x${heXai()}`)
+        }
         for(var w= 3; w;w--){
-            physic.add({type:'box', group:1, size:[1 + Math.random()*3,(function(){a=Math.random()*15;return a})(),1 + Math.random()*3], pos:[(Math.random()* ((37.5-12.5) + 1) + 12.5) * (Math.random() < 0.5?-1:1),0,-45.5+(Math.random()*6-2.5)], rot:[Math.random()*180,Math.random()*180,Math.random()*180], mass: 0,material: recTangl([0xf928f9, 0x2802c9, 0x39c92c, 0x2889c9, 0xd010d0, 0x20dcaa, 0xaa8c99, 0x322d2f, 0x4d7dd3, 0x1124c1][parseInt(Math.random() * 10)])});
+            rBool= (Math.random() < 0.5?true:false)
+            physic.add({type:'box', group:1, size:[1 + Math.random()*1.8,(function(){a=Math.random()*12;return a})(),1 + Math.random()*1.8], pos:[rBool?((Math.random()* ((37.5-12.5) + 1) + 12.5) * (Math.random() < 0.5?-1:1)):((-45.5+(Math.random()*6-2.5)) * (Math.random() < 0.5?-1:1)),0,rBool?((-45.5+(Math.random()*6-2.5)) * (Math.random() < 0.5?-1:1)):((Math.random()* ((37.5-12.5) + 1) + 12.5) * (Math.random() < 0.5?-1:1))], rot:[Math.random()*180,Math.random()*180,Math.random()*180], mass: 0,material: recTangl(heXaii())});
         }
     }},
     {pic: "https://static.stihl.com/upload/assetmanager/modell_imagefilename/scaled/zoom/f4d8426ce9c04a61bf176cf0e222f942.jpg", title: "Poda por todos", description: "Paga la cuota comunitaria para podar de las ramas La Tabla.", price: 24, funcTion: function(){
@@ -492,6 +509,72 @@ var recTangle_info= [
         for(var w= 10; w;w--){
             physic.add({type:'hardbox', group:1, size:[Math.random()*0.6,(function(){a=Math.random()*11;return a})(),Math.random()*0.6], pos:[-37.5+(Math.random()*6-2.5),a/2,-45.5+(Math.random()*10-4.5)], rot:[Math.random()*180,Math.random()*180,Math.random()*180], mass: 0,material: recTangl(0xd9966e), castShadow: false, breakable:true, breakOption:[ 56, 17,23, 23 ],});
         }
+    }},
+    {pic: "https://i.pinimg.com/originals/1b/86/c1/1b86c18db72c7dd22f32aa0984137911.jpg", title: "Almohada para medianos", description: "No para gigantes.", price: 58, funcTion: function(){
+        physic.add({ 
+            type: 'softMesh',
+            shape: new THREE.BoxBufferGeometry( 7,2,4, 3,4,3 ),
+            material: recTangl(0xf8f8f8),
+
+            pos:[view.getScene().getObjectByName(CARS[activeChar].name).position.x + Math.sin(view.getScene().getObjectByName(CARS[activeChar].name).rotation._y) * 3, view.getScene().getObjectByName(CARS[activeChar].name).position.y + 3,view.getScene().getObjectByName(CARS[activeChar].name).position.z + Math.cos(view.getScene().getObjectByName(CARS[activeChar].name).rotation._y) * 3],
+            size:[0.5,0.5,0.5],
+            rot:[0,0,0],
+
+            mass:1,
+            state:4,
+
+            viterations: 10,
+            piterations: 10,
+            //citerations:4,
+            //diterations:0,
+
+            friction: 0.5,
+            damping: 0.01,
+            pressure: 170,
+            stiffness: 0.6,
+
+            margin:0.05,
+            fromfaces:true,
+            
+        });    
+    }, re_fusTion: function(){
+
+    }},
+    {pic: "https://www.pdsigns.ie/contentFiles/productImages/Medium/IWSH33.jpg", title: "Para prueba", description: "Prueba la seguridad en los coches ante el vidrio. (--228 denominaciones)", price: -228, funcTion: function(){
+        var glass = view.material({
+            name:'glass',
+            color: 0x3366ff,
+            transparent: true,
+            roughness:0,
+            metalness:1,
+            opacity:0.5,
+            depthWrite: true,
+            //side: THREE.DoubleSide,
+        });
+    
+
+        for(var i = 0; i < 5; i++ ){
+            // breakOption: [ maxImpulse, maxRadial, maxRandom, levelOfSubdivision ]
+            physic.add({ 
+                type:'hardbox', size:[6, 0.2, 6], pos:[-45.5, view.getScene().getObjectByName(CARS[activeChar].name).position.y + 3+i*3,-32.5], rot:[0,0,0], mass:500, material:glass, 
+                breakable:true, breakOption:[ 200, 1, 3, 2 ],
+                margin: 0.05,
+                //
+                //ccdRadius:0.1,
+            });
+        }
+    }, re_fusTion: function(){
+
+    }},
+    {pic: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/109976d5-08d6-4457-af11-b3c3baf9944f/d2zbexh-ceabd9e8-00c4-48ec-bc40-d5bc650e31cd.jpg/v1/fill/w_900,h_1015,q_75,strp/hand_of_god_by_afina_energy-d2zbexh.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwic3ViIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS5vcGVyYXRpb25zIl0sIm9iaiI6W1t7InBhdGgiOiIvZi8xMDk5NzZkNS0wOGQ2LTQ0NTctYWYxMS1iM2MzYmFmOTk0NGYvZDJ6YmV4aC1jZWFiZDllOC0wMGM0LTQ4ZWMtYmM0MC1kNWJjNjUwZTMxY2QuanBnIiwid2lkdGgiOiI8PTkwMCIsImhlaWdodCI6Ijw9MTAxNSJ9XV19.n1Y2YFJEMxSqNvQq69Sk9Zktt_mTs9lZDfDDl1PKMGs", title: "Hand of God", description: `You will &quot;of God&quot; your hand (the pointer).`, price: 208, funcTion: function(){
+        for(a=3; a+1;a--){
+            chaR(a).hand= true
+        }
+        chaR(activeChar).hand= "of_God"
+        editor.extraMode== ""?editor.toggleExtraMode( 'picker' ):1
+        $("body").css({"cursor":"pointer"})
+    }, re_fusTion: function(){
+
     }}
 
       
@@ -502,8 +585,49 @@ function demo () {
 
     physic.set(); // reset default setting
 
-    // infinie plane
-    physic.add({type:'plane', group:1});
+
+    physic.add({ type:'box', size:[82,2,82], pos:[0,-25,0], rot:[0,0,0], mass:0, group:2, material: recTangl(0x999ddd)});
+    physic.add({type:'box', group:1, size:[82,25,1], pos:[0,-12.5,40.5], material: recTangl(0x999ddd) });
+    physic.add({type:'box', group:1, size:[82,25,1], pos:[0,-12.5,-40.5], material: recTangl(0x999ddd) });
+    physic.add({type:'box', group:1, size:[1,25,82], pos:[-40.5,-12.5, 0], material: recTangl(0x999ddd) });
+    physic.add({type:'box', group:1, size:[1,25,82], pos:[40.5,-12.5, 0], material: recTangl(0x999ddd) });
+
+    physic.add({type:'box', group:1, size:[9,5,100], pos:[45.5,-2.5, 0], material: recTangl(0xddd999) });
+    physic.add({type:'box', group:1, size:[9,5,100], pos:[-45.5,-2.5, 0], material: recTangl(0xddd999) });
+    physic.add({type:'box', group:1, size:[100,5,9], pos:[0,-2.5, -45.5], material: recTangl(0xddd999) });
+    physic.add({type:'box', group:1, size:[100,5,9], pos:[0,-2.5, 45.5], material: recTangl(0xddd999) });
+
+    /*physic.add ({ 
+        type:'terrain',
+        name:'water',
+
+        uv:2,
+        water:true,
+        pos : [0,-21.342543,0], // terrain position
+        size : [80,19,80], // terrain size in meter
+        sample : [128,128], // number of subdivision
+
+        frequency : [0.016,0.08], // frequency of noise
+        level : [ 2, 0.2 ], // influence of octave
+        expo: 0.03,
+
+        deep: 0.2,
+        opacity: 0.8,
+        border:true,
+        bottom:true,
+
+
+        friction: 1, 
+        //bounce: 0.0,
+        //soft_cfm:0.000001
+        //toTri: true,
+        group:2, 
+    });
+
+    water = physic.byName('water');*/
+
+    /*physic.add({type:'box', group:1, size:[9,5,100], pos:[40.5,-2.5, 0], material: recTangl(0x9dfddd) });
+    physic.add({type:'box', group:1, size:[5,0.1,9], pos:[37.5,0,-45.5], name: "recTangle0", material: recTangl(0xff1212) });*/
 
     // side wall
     physic.add({type:'box', group:1, size:[100,20,1], pos:[0,10,50.5] });
@@ -724,8 +848,6 @@ function afterLoad () {
         worldscale:1,
     })
 
-    // infinie plane
-    physic.add({type:'plane'});
 
     carMat = view.material({
         
@@ -781,8 +903,9 @@ function afterLoad () {
     physic.postUpdate= update
 };
 function update(){
-//view.getScene().getObjectByName("p3").rotateX(0)
-//view.getScene().getObjectByName("p3").rotateZ(0)
+    /*water.local.y += 0.25; 
+    water.local.z += 0.25; 
+    water.update( true );*/
 }
 function applyOption () {
 
@@ -802,10 +925,10 @@ function changeChar (x) {
 
 
 window.char= {
-    c0: {posiTion: -1, adquisiTions:[], currencies: 1000, skip: 0, thRowing: false, caR: "fordM"},
-    c1: {posiTion: -1, adquisiTions:[], currencies: 1000, skip: 0, thRowing: false, caR: "vaz"},
-    c2: {posiTion: -1, adquisiTions:[], currencies: 1000, skip: 0, thRowing: false, caR: "coupe"},
-    c3: {posiTion: -1, adquisiTions:[], currencies: 1000, skip: 0, thRowing: false, caR: "ben"}
+    c0: {posiTion: -1, adquisiTions:[], currencies: 1000, skip: 0, thRowing: false, caR: "fordM", hand: true},
+    c1: {posiTion: -1, adquisiTions:[], currencies: 1000, skip: 0, thRowing: false, caR: "vaz", hand: true},
+    c2: {posiTion: -1, adquisiTions:[], currencies: 1000, skip: 0, thRowing: false, caR: "coupe", hand: true},
+    c3: {posiTion: -1, adquisiTions:[], currencies: 1000, skip: 0, thRowing: false, caR: "ben", hand: true}
 }
 window.chaR= function(N){
     return Object.values(char)[N]
