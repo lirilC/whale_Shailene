@@ -597,7 +597,7 @@ function demo () {
     physic.add({type:'box', group:1, size:[100,5,9], pos:[0,-2.5, -45.5], material: recTangl(0xddd999) });
     physic.add({type:'box', group:1, size:[100,5,9], pos:[0,-2.5, 45.5], material: recTangl(0xddd999) });
 
-    /*physic.add ({ 
+    physic.add ({ 
         type:'terrain',
         name:'water',
 
@@ -624,7 +624,7 @@ function demo () {
         group:2, 
     });
 
-    water = physic.byName('water');*/
+    water = physic.byName('water');
 
     /*physic.add({type:'box', group:1, size:[9,5,100], pos:[40.5,-2.5, 0], material: recTangl(0x9dfddd) });
     physic.add({type:'box', group:1, size:[5,0.1,9], pos:[37.5,0,-45.5], name: "recTangle0", material: recTangl(0xff1212) });*/
@@ -903,9 +903,9 @@ function afterLoad () {
     physic.postUpdate= update
 };
 function update(){
-    /*water.local.y += 0.25; 
+    water.local.y += 0.25; 
     water.local.z += 0.25; 
-    water.update( true );*/
+    water.update( true );
 }
 function applyOption () {
 
