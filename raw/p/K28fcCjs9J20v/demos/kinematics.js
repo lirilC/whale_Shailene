@@ -59,6 +59,472 @@ var CARS = [
     { n:'003', name:'coupe'  , radius:0.36, nw:4, w:'1', mass:900,   wPos:[0.96, 0, 1.49] },
     { n:'005', name:'ben'    , radius:0.40, nw:4, w:'2', mass:1256,  wPos:[0.88, 0, 1.58] },
 ];
+var axis_front, axis_back, front_shell, front_rim, back_rim, tire_front, tire_back, extra_susp, extra_link;
+var bike, kaneda;
+var base_q;//, q_steering = new THREE.Quaternion()
+
+function create_bike ( id, pos, rot, shapeType ) {
+    posT= pos;
+    roT= rot;
+    mat = {};
+    decalBikeY = 0.21;
+    m1 = new THREE.Matrix4(), m2 = new THREE.Matrix4();
+    hour = option.hour;
+    debug = false;
+    console.log(`id: ${id}`)
+    option = {
+
+        restart:false,
+        follow: true,
+        hour:9,
+
+        name:id,
+
+        gravity:-10,
+
+        mass:500,
+        engine:2000,
+        acceleration:100,
+        // car body physics
+        friction: 0.1, 
+        restitution: 0,
+        linear: 0, 
+        angular: 0,
+        rolling: 0,
+        // suspension
+        autoSuspension:true,
+        s_stiffness: 153,
+        s_compression: 2.3,
+        s_damping: 2.4,//2.4
+        s_force: 6000,
+        s_length: 0.03,
+        s_travel: 0.06,
+
+        // wheel
+        w_friction: 100,//10.5,//1000,
+        w_roll: 0.3,
+
+        susp_av:0,
+        susp_ar:0,
+        open_shell:1,
+
+    }
+    initMaterials();
+
+    initBike(pos);
+
+    initKaneda();
+    ray_kaneda= physic.add({ type:'ray',name: `ray_kaneda`, pos:[0,0.2666,0], parent: view.getScene().getObjectByName("kaneda"), start:[0,0,0], end:[0,-4,0], mask:1, precision:1, callback: Yoch_kaneda, material: {opacity: 0} });
+    view.getScene().getObjectByName("ray_kaneda").material.opacity= 0;
+    view.getScene().getObjectByName("ray_kaneda").material.transparent= true;
+
+}
+
+///////
+
+
+//----------------------------
+//  INIT
+//----------------------------
+
+function initKaneda () {
+
+    var kaneda = view.getMesh( 'kaneda', 'ka_body' );
+    kaneda.material = mat.kaneda;
+
+    view.addUV2( kaneda );
+
+    kaneda.castShadow = true;
+    kaneda.receiveShadow = true;
+
+    kaneda.play( "turn" );
+
+    kaneda.getAnim();
+    //console.log( kaneda.anim )
+
+
+    var hair = view.getMesh( 'kaneda', 'ka_hair' );
+    var lunette = view.getMesh( 'kaneda', 'ka_lunette' );
+    var glass = view.getMesh( 'kaneda', 'ka_glass' );
+    var eye_l = view.getMesh( 'kaneda', 'ka_eye_l' );
+    var eye_r = view.getMesh( 'kaneda', 'ka_eye_r' );
+
+    hair.castShadow = true;
+    lunette.castShadow = false;
+    glass.castShadow = false;
+    eye_l.castShadow = false;
+    eye_r.castShadow = false;
+
+    hair.material = mat.kaneda;
+    lunette.material = mat.kaneda;
+    glass.material = mat.glass;
+    eye_l.material = mat.eye;
+    eye_r.material = mat.eye;
+
+    view.addUV2( hair );
+    view.addUV2( lunette );
+
+    hair.skeleton = kaneda.skeleton;
+    lunette.skeleton = kaneda.skeleton;
+
+    hair.frustumCulled = false;
+    lunette.frustumCulled = false;
+    //view.getMesh( 'kaneda', 'ka_body' );
+
+    //view.getScene().add( kaneda );
+
+    kaneda.scale.set( 0.1, 0.1, 0.1 );
+    kaneda.position.set(0,decalBikeY+0.38,-0.3);
+    kaneda.rotation.y = -90 * THREE.Math.DEG2RAD;
+
+    bike.add( kaneda );
+
+}
+
+function initBike (posT) {
+
+    var mesh = view.getMesh( 'kaneda', 'ak_chassis_base' );
+
+    var k = mesh.children.length, m, m2, name, j, back, tmpName;
+
+    while( k-- ){
+
+        m = mesh.children[k];
+        name = mesh.children[k].name;
+        view.addUV2( m );
+        m.material = mat.bike_1;
+
+        if( name === 'ak_axis_back' || name === 'ak_axis_front' ){
+
+            m.material = mat.bike_2;
+
+            back = name === 'ak_axis_back' ? true : false;
+ 
+            j = m.children.length;
+            while( j-- ){
+
+                m2 = m.children[j];
+                m2.material = mat.bike_2;
+
+                if( back ){
+
+                    axis_back = m;
+                    axis_back.material = mat.bike_1_m;
+                    back_rim = m2;
+
+                    if(m2.children[0].name === 'ak_tire_ar'){
+                        tire_back = m2.children[0];
+                        tire_back.material = mat.tires;
+                        m2.children[1].material = mat.glass_colors;
+                        m2.children[1].castShadow = false;
+                        m2.children[1].receiveShadow = false;
+                    } else {
+                        tire_back = m2.children[1];
+                        tire_back.material = mat.tires;
+                        m2.children[0].material = mat.glass_colors;
+                        m2.children[0].castShadow = false;
+                        m2.children[0].receiveShadow = false;
+                    }
+                    
+
+                } else {
+
+                    axis_front = m;
+
+                    if( m2.name === 'ak_front_shell' ){
+
+                        front_shell = m2;
+
+                        tmpName = front_shell.children[0].name;
+
+                        if( tmpName === 'ak_glass' ){
+                            front_shell.children[0].material = mat.glass;
+                            front_shell.children[1].material = mat.bike_3;
+                            front_shell.children[1].children[0].material = mat.glass_colors;
+                            front_shell.children[0].castShadow = false;
+                            front_shell.children[0].receiveShadow = false;
+                        } else {
+                            front_shell.children[1].material = mat.glass;
+                            front_shell.children[0].material = mat.bike_3;
+                            front_shell.children[0].children[0].material = mat.glass_colors;
+                            front_shell.children[1].castShadow = false;
+                            front_shell.children[1].receiveShadow = false;
+                        }
+                        
+                        //
+
+                    } else if ( m2.name === 'ak_rim_av' ){
+
+                        front_rim = m2;
+                        tire_front = front_rim.children[0];
+                        tire_front.material = mat.tires;
+
+                        if(m2.children[0].name === 'ak_tire_ar'){
+                            tire_front = front_rim.children[0];
+                            tire_front.material = mat.tires;
+                            front_rim.children[1].material = mat.glass_colors;
+                            front_rim.children[1].castShadow = false;
+                            front_rim.children[1].receiveShadow = false;
+                        } else {
+                            tire_front = front_rim.children[1];
+                            tire_front.material = mat.tires;
+                            front_rim.children[0].material = mat.glass_colors;
+                            front_rim.children[0].castShadow = false;
+                            front_rim.children[0].receiveShadow = false;
+                        }
+
+                    } else if ( m2.name === 'ak_extra_susp' ) {
+
+                        extra_susp = m2;
+                        extra_susp.material = mat.bike_1_m;
+
+                    } else {
+
+                        extra_link = m2;
+                        extra_link.material = mat.bike_1_m;
+
+                    }
+
+                } 
+
+            }
+
+        } else if( name === 'ak_chassis_shell' ) {
+
+            j = m.children.length;
+            while( j-- ){
+
+                m2 = m.children[j];
+                m2.material = m2.name ==='ak_panel' ? mat.bike_3 : mat.bike_1;
+                if( m2.name ==='ak_panel' ) m2.children[0].material = mat.glass_colors;
+
+            } 
+
+        }
+
+    }
+
+    //front_shell.visible = false
+
+    base_q = axis_front.quaternion.clone();
+
+
+    mesh.material = mat.bike_1;
+    mesh.scale.set( 0.1, 0.1, 0.1 );
+    mesh.rotation.y = -90 * THREE.Math.DEG2RAD;
+    mesh.position.y = decalBikeY;
+
+
+
+
+    // range -75 / -90
+    frontShell( option.open_shell );
+
+    var o = option;
+
+    physic.add({ 
+
+        type:'car',
+        name: o.name,
+        shapeType:'box',
+
+        wheelMaterial: mat.debugWheel,
+
+        mesh: mesh,//debug ? null : mesh,rotation
+
+        helper: debug,
+        pos:[posT.x, posT.y, posT.z], // start position of car physic.add( bike( i, [47, 1.3,-49+(i*2.4)], 'convex') );
+        rot:[roT.x,roT.y,roT.z], // start  of car
+        size:[ 0.6, 0.5, 2.0 ], // chassis size y 0.6
+        //size:[ 1.2, 0.6, 3.8 ], // chassis size
+        masscenter:[ 0, -0.6, 0 ], // local center of mass (best is on chassis bottom)
+
+        friction: o.friction,
+        restitution: o.restitution,
+        linear: o.linear, 
+        angular: o.angular,
+        limitAngular: [0.8,1,0.8],
+
+        nWheel:2,
+        radius:0.36,// wheels radius
+        radiusBack:0.39,// wheels radius
+        deep:0.19, // wheels deep only for three cylinder
+        wPos:[ 0.1, -0.02, 1.1 ], // wheels position on chassis
+        decalYBack:0.02,
+
+        // car setting
+        mass: o.mass,// mass of vehicle in kg
+        engine: o.engine, // Maximum driving force of the vehicle
+        acceleration: o.acceleration, // engine increment 
+
+        // suspension setting
+
+        // Damping relaxation should be slightly larger than compression
+        autoSuspension: o.autoSuspension,
+        s_compression: o.s_compression,// 0.1 to 0.3 are real values default 0.84 // 4.4
+        s_damping: o.s_damping,//2.4, // The damping coefficient for when the suspension is expanding. default : 0.88 // 2.3
+
+        s_stiffness: o.s_stiffness,// 10 = Offroad buggy, 50 = Sports car, 200 = F1 Car 
+        s_travel: o.s_travel, // The maximum distance the suspension can be compressed in meter
+        s_force: o.s_force, // Maximum suspension force
+        s_length: o.s_length,//0.1, // The maximum length of the suspension in meter
+
+        // wheel setting
+
+        // friction: The constant friction of the wheels on the surface.
+        // For realistic TS It should be around 0.8. 
+        // But may be greatly increased to improve controllability (1000 and more)
+        // Set large (10000.0) for kart racers
+        w_friction: o.w_friction,
+        // roll: reduces torque from the wheels
+        // reducing vehicle barrel chance
+        // 0 - no torque, 1 - the actual physical behavior
+        w_roll: o.w_roll,
+
+    });
+
+    bike = physic.byName( option.name );
+
+    bike.userData.w[0].visible = debug;
+    bike.userData.w[1].visible = debug;
+
+    bike.userData.w[0].castShadow = false;
+    bike.userData.w[0].receiveShadow = false;
+    bike.userData.w[1].castShadow = false;
+    bike.userData.w[1].receiveShadow = false;
+
+}
+
+function initMaterials () {
+
+    var ao = 1.5;
+
+    mat['debugWheel'] = view.material({
+        type:'Basic',
+        name:'debugWheel',
+        color: 0x3c7cff,
+        wireframe:true,
+        transparent:true,
+        opacity:0.5,
+    });
+
+    mat['glass'] = view.material({
+        name:'glass',
+        roughness: 0.1,
+        metalness: 1.0,
+        color: 0xeeefff,
+        transparent:true,
+        opacity:0.3,
+        side:'Double',
+        //depthTest:false,
+        depthWrite:false,
+
+    });
+
+    mat['glass_colors'] = view.material({
+        name:'glass_colors',
+        roughness: 0.1,
+        metalness: 1.0,
+        map: { url:'kaneda/bike_3_l.jpg'},
+        emissive: 0xAAAAAA,
+        emissiveIntensity:1,
+        emissiveMap: { url:'kaneda/bike_3_l.jpg'},
+        transparent:true,
+        opacity:0.66,
+    });
+
+    mat['bike_1'] = view.material({
+        name:'bike_1',
+        roughness: 1.0,
+        metalness: 1.0,
+        //color:0xffffff,
+        map: { url:'kaneda/bike_1_c.jpg'},
+        metalnessMap: { url:'kaneda/bike_1_m.jpg'},
+        roughnessMap: { url:'kaneda/bike_1_r.jpg'},
+        normalMap: { url:'kaneda/bike_1_n.jpg'},
+        aoMap: { url:'kaneda/bike_1_a.jpg'},
+        aoMapIntensity:ao,
+    });
+
+    mat['bike_1_m'] = view.material({
+        name:'bike_1_m',
+        roughness: 1.0,
+        metalness: 1.0,
+        map: { url:'kaneda/bike_1_c.jpg'},
+        metalnessMap: { url:'kaneda/bike_1_m.jpg'},
+        roughnessMap: { url:'kaneda/bike_1_r.jpg'},
+        normalMap: { url:'kaneda/bike_1_n.jpg'},
+        aoMap: { url:'kaneda/bike_1_a.jpg' },
+        aoMapIntensity:ao,
+        morphTargets:true,
+    });
+
+    mat['bike_2'] = view.material({
+        name:'bike_2',
+        roughness: 1.0,
+        metalness: 1.0,
+        map: { url:'kaneda/bike_2_c.jpg'},
+        metalnessMap: { url:'kaneda/bike_2_m.jpg'},
+        roughnessMap: { url:'kaneda/bike_2_r.jpg'},
+        aoMap: { url:'kaneda/bike_2_a.jpg'},
+        aoMapIntensity:ao,
+        //normalMap: { url:'kaneda/bike_2_n.jpg'),
+    });
+
+    mat['bike_3'] = view.material({
+        name:'bike_3',
+        roughness: 1.0,
+        metalness: 1.0,
+        map: { url:'kaneda/bike_3_c.jpg'},
+        normalMap: { url:'kaneda/bike_3_n.jpg'},
+        metalnessMap: { url:'kaneda/bike_3_m.jpg'},
+        roughnessMap: { url:'kaneda/bike_3_r.jpg'},
+        aoMap: { url:'kaneda/bike_3_a.jpg'},
+        aoMapIntensity:ao,
+    });
+
+    mat['tires'] = view.material({
+        name:'tires',
+        roughness: 0.6,
+        metalness: 0.5,
+        map: { url:'kaneda/tires_c.jpg'},
+        normalMap: { url:'kaneda/tires_n.jpg'},
+        //normalScale:new THREE.Vector2( 2, 2 ),         
+    });
+
+    mat['kaneda'] = view.material({
+        name:'kaneda',
+        skinning: true,
+        roughness: 1.0,
+        metalness: 1.0,
+        map: { url:'kaneda/kaneda_c.jpg'},
+        normalMap: { url:'kaneda/kaneda_n.jpg'},
+        //normalScale:new THREE.Vector2( 0.5, 0.5 ), 
+        metalnessMap: { url:'kaneda/kaneda_m.jpg'},
+        roughnessMap: { url:'kaneda/kaneda_r.jpg'},
+        aoMap: { url:'kaneda/kaneda_a.jpg'}, 
+        aoMapIntensity:ao,
+    });
+
+    mat['eye'] = view.material({
+        name:'eye',
+        roughness: 0.0,
+        metalness: 1.0,
+        map: { url:'kaneda/kaneda_c.jpg'},
+        normalMap: { url:'kaneda/kaneda_n.jpg'},   
+    });
+
+}
+kaneda_count= 0
+kaneda_inactive= `kaneda${kaneda_count?kaneda_count:""}`
+
+
+
+
+
+
+///////
+
 function vehicle ( id, pos, shapeType ) {
 
     var o = CARS[id];
@@ -567,12 +1033,33 @@ var recTangle_info= [
 
     }},
     {pic: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/109976d5-08d6-4457-af11-b3c3baf9944f/d2zbexh-ceabd9e8-00c4-48ec-bc40-d5bc650e31cd.jpg/v1/fill/w_900,h_1015,q_75,strp/hand_of_god_by_afina_energy-d2zbexh.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwic3ViIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS5vcGVyYXRpb25zIl0sIm9iaiI6W1t7InBhdGgiOiIvZi8xMDk5NzZkNS0wOGQ2LTQ0NTctYWYxMS1iM2MzYmFmOTk0NGYvZDJ6YmV4aC1jZWFiZDllOC0wMGM0LTQ4ZWMtYmM0MC1kNWJjNjUwZTMxY2QuanBnIiwid2lkdGgiOiI8PTkwMCIsImhlaWdodCI6Ijw9MTAxNSJ9XV19.n1Y2YFJEMxSqNvQq69Sk9Zktt_mTs9lZDfDDl1PKMGs", title: "Hand of God", description: `You will &quot;of God&quot; your hand (the pointer).`, price: 208, funcTion: function(){
-        for(a=3; a+1;a--){
+        /*for(a=3; a+1;a--){
             chaR(a).hand= true
-        }
+        }*/
         chaR(activeChar).hand= "of_God"
         editor.extraMode== ""?editor.toggleExtraMode( 'picker' ):1
         $("body").css({"cursor":"pointer"})
+    }, re_fusTion: function(){
+
+    }},
+    {pic: "https://images.ctfassets.net/o6sr41tx16eu/5ZJCjjuNZHLCZgSnSvxOyd/203c316a3bf79a60fdeee610235182a8/a1_copy.jpg", title: "Menos llantas", description: `Cambia tu vehículo por una moto Kaneda™.`, price: 330, funcTion: function(){
+        var p = {x:view.getScene().getObjectByName(CARS[activeChar].name).position.x, y: view.getScene().getObjectByName(CARS[activeChar].name).position.y, z:view.getScene().getObjectByName(CARS[activeChar].name).position.z};
+        var roT = {x:view.getScene().getObjectByName(CARS[activeChar].name).rotation.x, y: view.getScene().getObjectByName(CARS[activeChar].name).rotation.y, z:view.getScene().getObjectByName(CARS[activeChar].name).rotation.z};
+        for (var i = CARS.length - 1; i >= 0; i--) {
+            if(typeof CARS[i].moto != "undefined") {
+                var pM = {x:view.getScene().getObjectByName(CARS[i].moto).position.x, y: view.getScene().getObjectByName(CARS[i].moto).position.y, z:view.getScene().getObjectByName(CARS[i].moto).position.z};
+                physic.matrix( [ { name:CARS[i].name, pos: [ pM.x, pM.y, pM.z], noVelocity:true } ] )
+                CARS[i].moto= undefined
+            }
+            chaR(i).moto= undefined
+        }
+
+        physic.matrix( [ { name:CARS[activeChar].name, pos: [ 0, -222, 0], noVelocity:true } ] )
+        physic.matrix( [ { name:"kaneda", pos: [ p.x, 2.2, p.z], rot: [roT.x, roT.y, roT.z], noVelocity:true } ] )
+        physic.drive("kaneda")
+        follow("kaneda") 
+        CARS[activeChar].moto= "kaneda"
+        chaR(activeChar).moto= "kaneda"
     }, re_fusTion: function(){
 
     }}
@@ -710,7 +1197,7 @@ function demo () {
         gravity:[ 0, option.gravity ,0 ],
     })
 
-    view.load ( 'cars.sea', afterLoad, true );
+    view.load ( ['kaneda.sea', 'cars.sea'], afterLoad, true );
 
     view.load ( 'chess.sea', afterLoadGeometry, true, true );
     window.mat= {}
@@ -731,7 +1218,34 @@ function afterLoadGeometry(){
     addPawn('p4', 0xffff00, [40,0,-45])
 } 
 function Yoch_fordM( o ){
-    if(option.currentCar!="fordM")return
+    if(option.currentCar!="fordM" || "undefined"!=typeof chaR(activeChar).moto)return
+    if(0==o.name.indexOf("recTangle") && ("undefined"==typeof oldColor || ("undefined"!=typeof oldColor && oldColor.recT.name != o.name))){
+        if("undefined"!=typeof oldColor){oldColor.recT.material.color= oldColor.col; active_recTangle= null;}
+        if("undefined"==typeof oldColor || ("undefined"!=typeof oldColor && oldColor.recT.name != o.name)){
+            info.show(recTangle_info[parseInt(o.name.slice(9))])
+        }
+        oldColor= {recT:view.getScene().getObjectByName(o.name), col: view.getScene().getObjectByName(o.name).material.color}
+        if(parseInt(o.name.slice(9)) == chaR(activeChar).posiTion && !chaR(activeChar).thRowing){
+            active_recTangle= parseInt(o.name.slice(9));
+            view.getScene().getObjectByName(o.name).material.color= {r:0.3,g:1,b:0.3}
+        }else{
+            view.getScene().getObjectByName(o.name).material.color= {r:0.5,g:0.5,b:0.5}
+            active_recTangle= null;
+        }
+    }else if("undefined"!=typeof oldColor && oldColor.recT.name != o.name){
+        oldColor.recT.material.color= oldColor.col;
+        active_recTangle= null;
+        delete oldColor
+        info.clear()
+    }
+    if(0==o.name.indexOf("recTangle") && chaR(activeChar).thRowing){
+        oldColor= "undefined"==typeof oldColor? {recT:view.getScene().getObjectByName(o.name), col: view.getScene().getObjectByName(o.name).material.color}: oldColor
+        view.getScene().getObjectByName(o.name).material.color= {r:0.5,g:0.5,b:0.5}
+        active_recTangle= null;
+    }
+} 
+function Yoch_kaneda( o ){
+    if("undefined"==typeof chaR(activeChar).moto)return
     if(0==o.name.indexOf("recTangle") && ("undefined"==typeof oldColor || ("undefined"!=typeof oldColor && oldColor.recT.name != o.name))){
         if("undefined"!=typeof oldColor){oldColor.recT.material.color= oldColor.col; active_recTangle= null;}
         if("undefined"==typeof oldColor || ("undefined"!=typeof oldColor && oldColor.recT.name != o.name)){
@@ -758,7 +1272,7 @@ function Yoch_fordM( o ){
     }
 } 
 function Yoch_vaz( o ){
-    if(option.currentCar!="vaz")return
+    if(option.currentCar!="vaz" || "undefined"!=typeof chaR(activeChar).moto)return
     if(0==o.name.indexOf("recTangle") && ("undefined"==typeof oldColor || ("undefined"!=typeof oldColor && oldColor.recT.name != o.name))){
         if("undefined"!=typeof oldColor){oldColor.recT.material.color= oldColor.col; active_recTangle= null;}
         if("undefined"==typeof oldColor || ("undefined"!=typeof oldColor && oldColor.recT.name != o.name)){
@@ -785,7 +1299,7 @@ function Yoch_vaz( o ){
     }
 }
 function Yoch_coupe( o ){
-    if(option.currentCar!="coupe")return
+    if(option.currentCar!="coupe" || "undefined"!=typeof chaR(activeChar).moto)return
     if(0==o.name.indexOf("recTangle") && ("undefined"==typeof oldColor || ("undefined"!=typeof oldColor && oldColor.recT.name != o.name))){
         if("undefined"!=typeof oldColor){oldColor.recT.material.color= oldColor.col; active_recTangle= null;}
         if("undefined"==typeof oldColor || ("undefined"!=typeof oldColor && oldColor.recT.name != o.name)){
@@ -812,7 +1326,7 @@ function Yoch_coupe( o ){
     }
 }
 function Yoch_ben( o ){
-    if(option.currentCar!="ben")return
+    if(option.currentCar!="ben" || "undefined"!=typeof chaR(activeChar).moto)return
     if(0==o.name.indexOf("recTangle") && ("undefined"==typeof oldColor || ("undefined"!=typeof oldColor && oldColor.recT.name != o.name))){
         if("undefined"!=typeof oldColor){oldColor.recT.material.color= oldColor.col; active_recTangle= null;}
         if("undefined"==typeof oldColor || ("undefined"!=typeof oldColor && oldColor.recT.name != o.name)){
@@ -869,6 +1383,9 @@ function afterLoad () {
         physic.add( vehicle( i, [47, 0,-49+(i*2.4)], 'convex') );
     }
 
+    create_bike("kaneda", {x:0, z:0, y: -77}, {x:0, z:0, y: -77});
+    
+
     setTimeout(function(){for(var e= 0; e<=3;e++){
         chaR(e).name= prompt(`\u00bfQui\u00e9n conducir\u00e1 el ${CARS[e].name}\u003f`)
     };
@@ -906,6 +1423,48 @@ function update(){
     water.local.y += 0.25; 
     water.local.z += 0.25; 
     water.update( true );
+
+
+    //////
+    /*data = bike.userData;
+
+    option.susp_av = -data.suspension[0]*10;
+    option.susp_ar = -data.suspension[1]*10;
+
+    var r = data.steering * 0.5;
+
+    m1.makeRotationY( r );
+    m2.makeRotationFromQuaternion(base_q);
+    m2.multiply(m1);
+    axis_front.setRotationFromMatrix(m2);
+
+    var frame = 24 - (Math.round( r * THREE.Math.RAD2DEG )+12);
+
+    kaneda.playFrame( frame, 24 );
+
+
+    //var r = (data.speed*THREE.Math.DEG2RAD*0.8)
+
+    tire_front.rotation.x = data.wr[0];
+    tire_back.rotation.z = -data.wr[1];
+
+    //tire_front.rotation.x += r;
+    //tire_back.rotation.z -= r;
+
+    var sav = option.susp_av*2.61;
+
+    front_rim.position.y = -7.172 + sav;
+    back_rim.position.y = -option.susp_ar;
+
+    axis_back.setWeight( 'ak_axis_back_low', ((-option.susp_ar+0.3)*1.66666) );
+    extra_susp.setWeight( 'ak_extra_susp_low', 1-((sav+0.783)*0.638) );*/
+}
+function frontShell ( n ) {
+
+    // range -75 / -90
+    front_shell.rotation.x = - (75 + ( n * 15 )) * THREE.Math.DEG2RAD;
+    extra_link.setWeight( 'ak_link_low', n );
+
 }
 function applyOption () {
 
@@ -916,8 +1475,12 @@ function applyOption () {
 window.activeChar= 0
 window.active_recTangle= null
 function changeChar (x) {
-    follow( CARS[x].name )
-    physic.drive (CARS[x].name);
+    if(typeof chaR(x).moto == "undefined"){
+        follow( CARS[x].name )
+    }else{
+        follow( chaR(x).moto )
+    }
+    physic.drive (typeof chaR(x).moto == "undefined"?CARS[x].name:chaR(x).moto);
     option.currentCar= CARS[x].name
     activeChar= x
     /*Object.values(char)[0].posiTion= 2*/
