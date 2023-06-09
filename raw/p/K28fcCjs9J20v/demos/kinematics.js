@@ -609,7 +609,7 @@ var recTangle_info= [
             name:'ball', type:'highsphere', mass:1.24, 
             size:[0.2], pos:[12.5,4,-45.5], 
             friction: 0.5, restitution:0.6, 
-            material: mat.bball 
+            material: matt.bball 
         });
         var material= function(c){return new THREE.MeshBasicMaterial( {color: c} )};
 
@@ -1042,7 +1042,7 @@ var recTangle_info= [
     }, re_fusTion: function(){
 
     }},
-    {pic: "https://images.ctfassets.net/o6sr41tx16eu/5ZJCjjuNZHLCZgSnSvxOyd/203c316a3bf79a60fdeee610235182a8/a1_copy.jpg", title: "Menos llantas", description: `Cambia tu vehículo por una moto Kaneda™.`, price: 330, funcTion: function(){
+    {pic: "https://images.ctfassets.net/o6sr41tx16eu/5ZJCjjuNZHLCZgSnSvxOyd/203c316a3bf79a60fdeee610235182a8/a1_copy.jpg", title: "Menos llantas", description: `Cambia tu veh&#xed;culo por una moto Kaneda&#x2122;.`, price: 330, funcTion: function(){
         var p = {x:view.getScene().getObjectByName(CARS[activeChar].name).position.x, y: view.getScene().getObjectByName(CARS[activeChar].name).position.y, z:view.getScene().getObjectByName(CARS[activeChar].name).position.z};
         var roT = {x:view.getScene().getObjectByName(CARS[activeChar].name).rotation.x, y: view.getScene().getObjectByName(CARS[activeChar].name).rotation.y, z:view.getScene().getObjectByName(CARS[activeChar].name).rotation.z};
         for (var i = CARS.length - 1; i >= 0; i--) {
@@ -1200,8 +1200,8 @@ function demo () {
     view.load ( ['kaneda.sea', 'cars.sea'], afterLoad, true );
 
     view.load ( 'chess.sea', afterLoadGeometry, true, true );
-    window.mat= {}
-    mat['bball'] = view.material({
+    window.matt= {}
+    matt['bball'] = view.material({
         name:'bball',
         roughness: 0.4,
         metalness: 0.7,
